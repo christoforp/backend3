@@ -23,65 +23,52 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const express = require('express')
 
-// We initalize variable "blogSchema", which purpose is to determine in which mode we will save them in database 
-// So practically it means that it tells us that what mode they will be saved in database.
-const blogSchema = new mongoose.Schema({ 
-  title:String,  // We initialize variable title => String, which is found in blogs collection => blogs.title 
-  author: String, // We initialize variable author => String, which is found in blogs  collection => blogs.author 
-  url: String, // We initialize variable url => String, which is found in blogs collection => blogs.author. 
-  likes: Number // We initialize variable likes => Number, which is found in blogs collection => blogs.likes
+const blogSchema = new mongoose.Schema({
+  title:String,
+  author: String,
+  url: String,
+  likes: Number
   
 })
 
-// We initalize variable Blog, which is equal as that "mongoose.model()" function, So it means that if Blog value would be programmer, then data move it programmers collection. 
-// So  it means that "MongooseDB Move it automatically to that collection, because it moves automatically all letters to small and S letter end of that."
-const  Blog = mongoose.model('Blog', blogSchema) // As we see that "Blog" is an plural, because mongooses convention is to determine that all in plural mode. 
+const  Blog = mongoose.model('Blog', blogSchema)
 
-// We initialize variable "mongoUrl", where we get connection to database with that Url value from MongoDB library.
 const mongoUrl= `mongodb+srv://christoforp:christoforp@cluster0.osmk6.mongodb.net/myPhonebook?retryWrites=true&w=majority`
-mongoose.connect(mongoUrl) // "mongoose.connect(mongoUrl)" purpose is to get connection to database with that Url value  what we have been taken from MongoDB library.
+mongoose.connect(mongoUrl)
 
+app.use(cors())
 
-app.use(cors()) // We initalize and taking "middleware cors"  in  account, which purpose is to allow request from all origins to express route.
-// So "app.use(cors())" purpose is to accept request from another origins. 
+app.use(express.json())
 
-app.use(express.json()) // We initialize and taking "express.json" into account that we can get into data what coming from request If we don't use then it would be error.
-// So "app.use(express.json())" purpose is to take request with raw that and change it to javascript creature 
-
-
-app.get('/api/blogs', (request,response) => { // We determine application eventhandler, which purpose is to get app to  =>"'/api/blogs" mode 
+app.get('/api/blogs', (request,response) => {
   Blog
-  .find({}) // It apply all values from database and return it back to user. 
-  .then(blogs => { // We answering request with response variables and express move that automatically to Json mode. 
-    response.json(blogs) // We answering HTTP request with list object  in Json mode  As result there is now found variables "blogs"  returned object of MongoDB in table because We are answering request with JSON method.
-
+  .find({})
+  .then(blogs => {
+    response.json(blogs)
   })
 })
 
+app.post('/api/blogs', (request,response) => {
+  const blog = new Blog(request.body)
 
-
-app.post('/api/blogs', (request,response) => { // We determine application eventhandler, which purpose is to get app  to => "'/api/blogs" mode and becoming HTTP request 
-  // When we are adding something in Postman, We have to choose => body and raw mode also we have to make sure that is Json mode.
-  // We initalize blog, which use that "find({...}" function, which means that we have been created separated module for "Blog" 
-  const blog = new Blog(request.body) // We initalize variable blog, which is equals as request.body 
-                                  // There is seen "new mongoose Schema" inside of that "Blog" module, which purpose is to define what mode that will be saved to MongoDB database.
-                                  // We are creating "blog object" with Blog construction function, So they are like javascript object, which have combination method that they can save object in database.
- blog                            
-  .save()  // We answering request with saveoperation inside of callbackfunction.
-  .then(savedBlog => { // "callbackfunctions" parameter => savedBlog
-    response.status(201).json(savedBlog) // We answering HTTP request with statuscode(201) and Json formated mode.
+  blog
+  .save()
+  .then(savedBlog => {
+    response.status(201).json(savedBlog)
   })
 
   })
 
 
-// We initialize variable PORT, which purpose is to define in which PORT it going to run that actual application logic file.
-// In this case defined PORT have been initalized to PORT => 3002
+// We initalize function variable server, which is equal and use that to run application. 
+// Running of application happens with "server" variables object "http.createServer(app)"
+
+
 const PORT = 3002
 
 
-app.listen(PORT, () => {  // If we Would not be used this, then it there is nothing visible in terminal. 
-  logger.info(`server running on port ${PORT}`) // "logger.info" purpose is to print that normal loggermessage to console & terminal  and that text => "server running on port"
+app.listen(PORT, () => {
+  logger.info(`server running on port ${PORT}`) // "console.info" purpose is to print that normal loggermessage to console & terminal  and that text => "server running on port"
 })  // We are making printing of running with function "info" of logger module, Which is located in => './utils/logger' 
     // We also get into to other environment variables for import "configmodule" => ${config.PORT}
 
