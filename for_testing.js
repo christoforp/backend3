@@ -18,10 +18,13 @@ const average = (array) => {
   const reducer = (sum, item) =>  {
     return   sum + item 
   } // If length of array is zero then it return that lenght in all other cases it calculate  average  with reduce method 
-     return array.length === 0 
-     ?  0
+  return array.length === 0 
+    ?  0
     :array.reduce(reducer, 0) / array.length
 }
+
+
+
 
 
 

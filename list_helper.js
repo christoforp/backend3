@@ -2,6 +2,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable linebreak-style */
 
+
+
 // We are determining simple variable  "dummy" , that function get value => blog
 const dummy = (blogs) => {
 // in practically that function works with "listhelper.test.js" file where we  have been initialized variable => "const blogs[]"
@@ -15,12 +17,25 @@ const dummy = (blogs) => {
     : blogs.reduce(reducer, 0)/blogs.length  // If that if condition will not happen, then we return that reducer variable va
 }
 
+// We determining simple variable "totallikes", what we are using for test. That function get also value  table of blogs.
+const totalLikes = (blogs) => {
+// in practically that function works with "listhelper.test.js" file where we  have been initialized variable => "const blogs[]"
+// Test implent that belov function, So it apply all "likes" object values from blogs table, then it conduct that "reduce" method  function
+  return blogs.map(total => total.likes).reduce((previousValue, currentValue) => previousValue + currentValue)
+}
+
+// We determining simple variable "favoriteBlog", which get its value table of blogs. This variable and function using purpose is mean to for test. Therefore we can call it to  as"testfunction"
+
+
+
+
 
 
 // We are using module exports that it move that determinided "dummy" and "totallikesfor module user
 // We are also separating that "dummy"  of test function  to own module what module user can use.
 module.exports = {
   dummy,
+  totalLikes,
 
 
 
