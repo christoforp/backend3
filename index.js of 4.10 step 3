@@ -1,0 +1,18 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable linebreak-style */
+// index.js file import only actual "app.js" file and run application. 
+const app  = require('./app') // We initalize  "app" function, which have to use that app libary and actual "app.js" file
+const http = require('http')  
+const config = require('./utils/config') // We initalize function "config", which require that config library and things inside of "config.js" 
+// We also get into other environment variables with import config to module => "('./utils/config')"
+const logger = require('./utils/logger') // We initalize function logger, which require that logger library and things inside of "logger.js"
+
+// Index.js imports only actual application of app.js file  and run application 
+const server = http.createServer(app)
+
+// Running happens now with server variable object 
+// When running occurs then we make console printing with logger.info 
+server.listen (config.PORT, () => {  // If we Would not be used this, then it there is nothing visible in terminal. 
+  logger.info(`server running on port ${config.PORT}`) // "logger.info" purpose is to print that normal loggermessage to console & terminal  and that text => "server running on port"
+})  // We are making printing of running with function "info" of logger module, Which is located in => './utils/logger'  // We also get into to other environment variables for import "configmodule" => ${config.PORT}
