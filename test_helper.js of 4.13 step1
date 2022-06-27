@@ -1,0 +1,26 @@
+/* eslint-disable linebreak-style */
+const Blog = require('../models/blog')
+const defaultValues = [{
+  title: 'Full stack 2022 Bloglist',
+  author: 'Christofor Pavlidi',
+  url: 'christofor.pavlidi.fi',
+  likes: 0
+},
+
+{
+  title: 'Full stack 2022 Bloglist',
+  author: 'Christofor Pavlidi',
+  url: 'christofor.pavlidi.fi',
+  likes: 0
+},
+
+
+]
+// We are determining function "personsIndb" with module, which we can check object of database.
+const blogsInDatabase = async () => {
+  const  blogs = await  Blog.find({})
+  return blogs.map(result => result.toJSON())
+}
+module.exports= {
+  blogsInDatabase,
+  defaultValues }
