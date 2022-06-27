@@ -1,0 +1,201 @@
+/* eslint-disable linebreak-style */
+
+
+const mongoose = require('mongoose') // We are determining variable "mongoose", which have to use that mongoose =>  mongoDb library
+
+const supertest = require('supertest') // We initalize supertest, which have to use that "supertest library "
+const app = require('../app') // We initalize app function, which have to that app library and actual "app.js" file
+const api = supertest(app) // We initalize api, which import of determined app.js to express application  with wrapping of  supertest
+const helper = require('../tests/test_helper') // We initalize helper, which have to use things inside of  test_helper.js
+const Blog = require('../models/blog') // We initalize Blog, which require things indside of => models/blog.js file
+
+
+beforeAll(async () => {
+  const database = 'mongodb+srv://christoforp:christoforp@cluster0.osmk6.mongodb.net/myPhonebook?retryWrites=true&w=majority'
+  mongoose.connect(database, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true })
+})
+
+
+
+// We are using beforeEach function, which purpose is to use that "async" syntax method and implement things inside of {...}
+// This means that if we run test with commant => "npm run test", then it conduct things inside of that {...}
+// "before me moving to first test of "test"(), then we conduct things inside of that function
+// That function saves database both  of zero and first array of "helper.defaultValues"map"
+// If we would like save several array at sime time when we initialize that.
+
+beforeEach(async () => {
+  await Blog.deleteMany({}) // We delete all values from database
+  let newBlogValue = new Blog(helper.defaultValues[0]) // We initialize variable newBlogValue, which is equal as that newBlog()
+  await newBlogValue.save() // We are saving variables newBlogValue values to database before we move into next section
+  newBlogValue = new Blog(helper.defaultValues[1]) // When we have saved previous variable value into database, then it getvalue of 1
+  await newBlogValue.save() // We are saving variables newBlogValue values to database before we move into next section.
+})
+
+
+describe('When there is initially some blogs saved', () => {
+
+  // We are determining independent testcases with function of test with async syntax method. // So we are conducting things inside of that {...} function
+  test('blogs are returned as json', async() => {
+    await api // There is seen syntax await before method call for api object
+      .get('/api/blogs')  // Test method HTTP request making request with ('api/persons)
+      .expect(200)         // We are making sure that we answering request with statuscode(200)
+      .expect('Content-Type',  /application\/json/) // We also making sure that it return that data in correct mode that it => Content-Type' /application\json/)
+    console.log('entered text') // Print that text visible in terminal&console
+  })
+
+  // We are determining independent testcases with function of test. Where we using that async syntax method and it conduct things inside of that function
+  test('checking if blogs 1 value in database', async() => { // It print that text of test in console, when we conduct that test
+    const response = await api.get('/api/blogs') // We initialize variable response, which get value await "api.get('/api/blogs") So it wait when that => api.get('/api/blogs') have been conducted.
+    expect(response.body).toHaveLength[1] // We exploring correctness of answering data with expect(response.bodymethod) jest
+    // If it get value of 1, then test works correctly if not then it would be error.
+
+  })
+
+
+
+
+
+
+
+
+
+
+  // We are determining independent testcases with function of test with async syntax method. It works in that way when we conduct  things inside of {...} function
+  test('Checking if blogs field is id', async() => { // It print that text in console and terminal
+  // We initalize variable "response", which is equal as that await "api.get(/api/blogs)"
+    const response = await api.get('/api/blogs', async () => {
+    // We are using  => "models/blog", where it found that Blog and its table
+    // First parameter of blog determine in which mode we are using that collection and blogdata of second parameter determine that returning structures data.
+      expect(response.body[0].id).toBeDefined() // We are making sure that correctness and result of response.body. We also verifying extence of property with "jest toBeDefined() method." // Whereas  object of "response.body[0].id works then result of test correct in other cases it would be error. "
+    })
+  })
+})
+
+
+
+
+// We are determining independent testcases with function of test. Where that arrow function begins with word "async"
+// We are creating test, which check that if persons amount returned by api increases. It also check that created persons is in amoung saved one.
+test('a valid blog can be added', async() => {  // They provide calling asynchronous function, which return promises in way that makes code looks like synchronous
+// We initalize variable newBlog, which get its value that table.
+  const newBlog= {
+    title: 'async/await simplifies making async calls', // value of title is that text => "async/await simplifies making async calls"
+    author: ' a new author of blog have been added', // Value of author is that text => "a new author of blog have been added"
+    url:  'a new url of blog have been added', // Value of url is that text => "a new url of blog have been added"
+    likes: '0' /// Value of likes is that text => "0"
+  }
+  // that we can call asynchronous operation with await  they have to return promises.So we can use await only if we are in async function.
+  await api
+    .post('/api/blogs') // We are making HTTP "POST" request to => 'api/blogs'
+    .send(newBlog)
+    .expect(200) // We are making sure that we answering request with statuscode(201).
+    .expect('Content-Type', /application\/json/) // We are also making sure that data will be saved in correct mode
+
+  // We are determining function "blogsAtEnd", which is equal as that await and using that blogsInDatabase function what we have been defined in test_helper.js
+  // We are determining function "blogsAtEnd" with module, which we can check object of database.
+  const blogsaAtEnd = await  helper.blogsInDatabase()
+  // We are exploring correctness of "blogsAtEnd"
+
+  expect(blogsaAtEnd).toHaveLength(helper.defaultValues.length +1) // We are exploring correctness of blogsAtEnd with jest expect method.
+
+  const findAddedTittle = blogsaAtEnd.map(r => r.title) // We are using command =>  "blogsAtEnd".map(r => r.content)", which purpose is to create table of persons what api have been returned.
+  expect(findAddedTittle).toContain( // We are checking that blogs given as parameter  is in the list of blogs returned by API
+    'async/await simplifies making async calls'
+
+
+
+  )
+
+})
+
+
+
+// We are determining independent testcases with function of test, So we are using "test" function {...} That test also using async syntax method
+test('blogs without value of likes get zero of its default value',  async() => { // It print that text in terminal when we conduct those test.
+  // We intialize newBlog, which get that table of its value
+  const newBlog = {
+    title: 'a new title of blog have been added', // That titles value is that text => "a new title of blog have been added"
+    author: ' a  new author of blog have been added', // That authors value is that text => "a new author of blog have been added"
+    url:  'a new url of blog have been added',  // That url value is that text => "a new url of blog have been added"
+
+  }
+
+  // Method call for api object is preceded by await keyword. // We are using async and await syntaxes because that making a request for server are asynchronous operation.
+  // They provide calling asynchronous function, which return promises in way that makes code looks like synchronous
+  await   // Before api we are using syntax method await.
+  api
+    .post('/api/blogs') // We are making HTTP "POST" request to => "api/blogs"
+    .send(newBlog) // We are sending variable "newBlog" values with "api send method "
+    .expect(200) // We are making sure that it return it in statuscode(200)
+    .expect('Content-Type', /application\/json/ ) // We also make sure that it data will be saved in correct mode
+    // We are determining function "blogsAtEnd", which is equal as that await and using that blogsInDataBase function what we have been defined in test_helper.js
+    // We are determining function "blogsInDatabase" with module, which we can check object of database and waiting when "helper.blogsInDatabase is ready"
+  const blogsaAtEnd= await helper.blogsInDatabase()
+  // We are exploring correctness of "blogsAtEnd"
+  // In this test variable blogsAtEnd get value -2 because we have three values  in database
+  expect(blogsaAtEnd[blogsaAtEnd.length  -3].likes).toBe(0) // We are exploring correctness of blogsAtEnd with jest expect method. // Test expect that variable value of blogsAtEnd [blogsAtEnd.length -3].likes) is equal with zero, if function is true, then result of test is succesfull
+
+})
+
+
+// We are creating independent test cases with function "test" with async syntax method, So we are conducting things inside of that test function {...} with a
+test('valid blogs is not added', async () => { // It print text visible in terminal&console when we executing that test
+// We are creating variable of "newBlog", which get value that table
+  const newBlog = {
+    author: 'Christofor', // author, which get its value => "a new author of blog have been added"
+  }
+
+  // Method call for api object is preceded by await keyword. // We are using async and await syntaxes because that making a request for server are asynchronous operation.
+  // They provide calling asynchronous function, which return promises in way that makes code looks like synchronous
+  await
+  api // before api method we are using "await" syntax method
+    .post('/api/blogs') // We are using POST method, which get POST all HTTP request to => "api/blogs"
+    .send(newBlog) // We are sending that "newBlog"  and its table values with "api send method"
+    .expect(400) // When we trying to add blogs without title or missing content, then we expect result answer with 404 "bad request"
+  // Both of test is checking what mode it have been ended while it applying all persons information.
+  // We are determining function "blogsAtEnd", which is equal as that await and using that blogsInDatabase function what we have been defined in test_helper.js
+  // We are determining function "blogsInDatabase" with module, which we can check object of database. // So those can be used for writing asynchronous code with appereance of synchronous code.
+  const blogsAtEnd = await helper.blogsInDatabase()
+  expect(blogsAtEnd).toHaveLength(helper.defaultValues.length) // We are exploring correctness of blogsAtEnd with jest expect method
+  // Test expect that variabe  of blogsAtEnd value is "helper.defaultValues length", So  if that is true like we expect, then result of test is correct
+
+})
+
+
+
+// We are determining independent testcases with function of test, So we conducting things inside of that test function {...} with async syntax method
+test('a blog can be deleted', async () => { // Print that text visible in terminal and console
+  const getValue= await helper.blogsInDatabase() // We are determining function "getValue", which is equal as that await and using that blogsInDatabase function what we have been defined in test_helper.js
+  const deleteValue= getValue[0] // We are determining "deleteValue, which is equal as that variable of getValue[0]", So it purpose is to show what value will be deleted from database.
+  // Method call for api object is preceded by await keyword. // We are using async and await syntaxes because that making a request for server are asynchronous operation.
+  // They provide calling asynchronous function, which return promises in way that makes code looks like synchronous
+  await api // before api we are using "await" syntax method
+    .delete(`/api/blogs/${deleteValue.id}`) // We are using HTTP delete request, which purpose is make HTTP delete request to => "api/blogs"
+    .expect(204) // We are expecting result  answer with "statuscode(204)"
+  // We are determining function "blogsAtEnd", which is equal as that await and using that blogsInDatabase function what we have been defined in test_helper.js
+  // We are determining function "blogsInDatabase" with module, which we can check object of database. // So those can be used for writing asynchronous code with appereance of synchronous code.
+  const blogsAtEnd = await helper.blogsInDatabase()
+  expect(blogsAtEnd).toHaveLength( // We are exploring correctness of test with jest expect method. So test expect that variable "blogsAtEnd" is equal its lenght with lenght of defaultValues
+    helper.defaultValues.length -1
+  )
+
+
+  const titles = blogsAtEnd.map(r => r.author) // We determining variable titles, which creating a new table with function map.{...},which applying all object by author.
+  expect(titles).not.toContain(deleteValue.author) // We are exploting correctness of test with jest expect method. // So test  expect that variable of titles content is not same value as inside of "deleteValue "// Whereas expecting result of test is correct, then test works correctly in other cases it would be error.
+
+})
+
+
+
+
+
+
+
+afterAll(() => { // We are using afterAll method  of jest, which purpose is to close connection to database after all test have been conducted.
+  mongoose.connection.close() // "mongoose.connection(close)" purpose is to stop and remove  connection into MongoDB database.
+})
+
+
+
