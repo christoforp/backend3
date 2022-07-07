@@ -1,0 +1,71 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable linebreak-style */
+const mongoose = require('mongoose')   // We initalize function "mongoose", which use "mongoose" library.
+const uniqueValidator = require('mongoose-unique-validator') // We  determine "uniqueValidator", which use "mongoose-unique-validator"
+
+// "Mongoose-unique-validator" is plugin, which add pre-validation to for uniquefield with "mongooseSchema".
+// This help to use make "errorhandler" easier and we get mongoose validation erro, when we  attempt to violate unique constraint.
+
+
+
+// We initalize variable "blogschema", which purpose is to determine, which mode we save those object into database.
+// So practically this means that, which mode they will be saved on the database.
+const  blogSchema = new mongoose.Schema({
+  // We utilize "Routes eventhandler" and handler defining data what have been saved into database.
+  // We are using "Mongoose" "validation functionality"
+  // We define validation rules for both datafield with  in Schema.
+
+  // We define variable field title , which get its type title  => String => it is found in database => blogs.title
+  title: { // There is found object of title in database, which uses settings inside of that function{...}
+    type: String, // That  type of object (title), which get value of String of datatype
+    required: true, // We are using "required", which mean that section of title must contain something and without title it it would be error.
+  },
+
+  author: String,     // We define variable author, which get its => String it is found in database => blogs.author
+  url:{              // There is found object of url in database, which uses settings inside of function {...}
+    type:String,     // That type of object(url), which get value of String of datatype
+    required: true,  // We are using "required", which mean that section of required must contain something and without url it would be error
+  },
+
+  likes:{    // There is found object of likes in database, which uses setting inside of that function{...}
+    type: Number, // We are giving "Number datatype" to object of likes.
+    default: '0' // We are giving to object of likes default value 0, which mean that if there is missing content in likes section then it will return that[0]
+  },   // We define variable likes => String, which is found in blogs collection  => blogs.likes
+  // We are extending that blogs Schema in that way So that blog contain information about the user who created it.
+  user: { // There is found object of user, which uses settings inside of that function{...}
+    type: mongoose.Schema.Types.ObjectId, // We are giving "ObjectId" from MongoDb database to type for user
+    ref: 'User' // We are referencing to "User"collections documents of user types  with ObjectId
+  }
+})
+
+
+
+// Adding uniqueValidator plugin. So we can easily add Validatio unique constraint.
+blogSchema.plugin(uniqueValidator) // This purpose is to apply uniqueValidator plugin to Schema.
+
+
+
+
+// We de can determine with this that which mode it show Json data
+blogSchema.set('toJSON', {
+  transform: (document, returnedObject) => { // We can make changes to data with "transform" function before we return it to user
+    returnedObject.id = returnedObject._id.toString() // We initalize variable "returnedObject.id", which is equals as "returnedObject._id.toString()"
+    delete returnedObject._id  // We are using "delete returnedObject._id" because we wanto get rid of object indpendent identifier
+    delete returnedObject.__v // We don't also want to show and return that idenfier "__v" of Mongo DB, So we are using "delete" to get rid of that.
+
+  }
+})
+
+
+
+
+
+
+
+module.exports = mongoose.model('Blog' ,  blogSchema) // We are using determining "mongoose" own module with "moduule.exports", So Its external section are seen when determine value for that "moduule.exports" it get value => "Blog"
+// There is no seen another things inside of that "module" like as Url or mongoose.
+// "mongoose.model"  will automatically move that model in MongoDB for example "Blog" will move automatically into "blogs" collection.
+// We take that export (function) to  use in application index.js file.
+// mongoose  convention  is to determine automatically that collension as the plural and changes big letter into small.
+
+
