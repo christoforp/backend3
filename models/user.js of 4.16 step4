@@ -1,0 +1,40 @@
+/* eslint-disable linebreak-style */
+// eslint-disable-next-line linebreak-style
+const mongoose = require('mongoose') // We determining and initialize "mongoose", which require that mongo db library.
+const userSchema = new mongoose.Schema({ // We initalize userSchema, which get value of that new mongoose.Schema table
+  username:{ // There is found "username" in database, which uses settings of function {...}
+    type:String,  // That type of object (username), which get value of String datatype
+    required: true, // We are using "required", which mean that it section of name should have some content in other cases it would be error.
+    minlength: 5 // We are using "minlenght", which mean that minlenght of username, should be at least 5 characters in other cases it would be error.
+  },
+
+  name: String, // There is found name object in database, which uses  datatype of String
+  passwordHash:{
+    type:String, // We are giving "String datatype " to object of passwordHash
+    required: true, // We are using "required", which mean that it  section of name should have some content in other cases it would be error
+    minlength: 5
+  },          // We are using "minlength", which mean that minlenght of name s // There is found "passwordHash in database, which uses settings inside  of function {..}"
+  content: [ // There is found object of content,  which uses settings inside of that function{...}
+    {  // We are giving "ObjectId" from MongoDb database to type for content
+      // Type of field is Object,which reference to Blog style document. Mongoose doesn't know by self that its purpose is field, which  references to Blogs
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog' // We are referencing to "User"collections documents of user types  with ObjectId
+    }
+  ]
+})
+
+
+// We can determine this that which mode it shows json data
+userSchema.set('toJSON', {
+  transform: (document,returnedObject) => { // We can make changes to data with "transform" function before we return it to user
+    returnedObject.id=returnedObject._id.toString() // We initalize variable "returnedObject.id", which is equals as "returnedObject._id.toString()
+    delete returnedObject._id  // We are using "delete returnedObject._id" because we wanto get rid of object indpendent identifier
+    delete returnedObject.__v // We don't also want to show and return that idenfier "__v" of Mongo DB, So we are using "delete" to get rid of that.
+    delete returnedObject.passwordHash // W
+  }
+})
+// We determining and initialize "User", which is equal as that "mongoose.model('User, userSchema)"
+// We are using determining "mongoose" own module with "const User", So Its external section are seen when determine value for that "const User " it get value => "User"
+const User = mongoose.model('User', userSchema)
+module.exports = User
+// "mongoose.model"  will automatically move that model in MongoDB for example "User" will move automatically into "users" collection.
