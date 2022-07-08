@@ -1,0 +1,69 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable indent */
+/* eslint-disable linebreak-style */
+/* eslint-disable linebreak-style */
+/* eslint-disable linebreak-style */
+/* eslint-disable linebreak-style */
+
+const blogsRouter = require('express').Router() // We are creating  router object with "blogsRouter" function and require('express').Router()
+const blog = require('../models/blog')
+const Blog =  require('../models/blog') // We initalize  variable  "Blog" and taking its models into account.
+// We are calling routes eventhandler to controllers So therefore we are using blogsRouter and determining routes.
+// We have been moved all defined routes, which are related to blogs in here.
+// We determine blogsRouter eventhandler, which purpose is to get  Router => '/
+// We want to that api works for that when it doing HTTP GET request to path =>  "api/users" besides showing its blogs id we want to also show its content
+blogsRouter.get('/',  async (request,response ) => {
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 }) // We are conducting that joint with mongoose command "populate"
+  // As we see that "populate method" is chained after eventhandler function in this case after "find" making the initial query
+  // Parameter of populate determine that blogs.id in user field will be replaced with similar document than those.
+  // mongooses "populate" function functionality is based on that we are determined reference types with mongoose schema.
+   response.json(blogs.map(result => result.toJSON())) // We answering request and express moves it automatically to json mode.
+})
+
+
+//  We determine blogsRouter eventhandler, which purpose is to handle all request and get Router to '/:id', So it handle all request, which are in '/:id' mode for example [1,2,3,4]
+blogsRouter.get('/:id',  async(request, response) => {
+
+  const blog = await Blog.findById(request.params.id)// We changes independent blogs review  to mode => "Blog.findById().then({})"
+    if(blog) {
+      response.json(blog)
+    } else {
+      response.status(404).end() // Whereas "findById" get wrond id value, then it goes rejected mode. We answering request with response.status(404).end()
+    // When "findById" get wrong id value of argument it throws error as result it goes rejected mode  then we using callbackfunction of catch block  => ".catch(error => {next(error))"
+
+  }
+})
+
+
+
+// We determine blogsRouter eventhandler, which purpose is to handle all http POST request and get that Router mode '/'
+blogsRouter.post('/',  async (request,response) => {
+  const blogs = new Blog(request.body) // We initalize that variable of blogs, which is equal as that "new Blog()" table
+  // We initialize variable of "savedBlog", which uses that function with "await" syntax, So it waiting that function => "await.blog.save() is conducted then it return it answer visible. "
+  const savedBlog = await blogs.save()
+ response.json(savedBlog.toJSON()) // When that function is implemented and blog is saved into database, then we answer request with json mode.
+
+})
+
+
+   // "response.json()" purpose is to answer and return that in statuscode(201) and in  json.mode
+    // If we trying to add a new Blog, which breaks validation rule, then it throws error. Therefore
+    // We are creating similar handler of creating a new blogs, that it can passes any potential exeption to the   "error handler middleware"
+   // We are using catch block, which simplify that call for next function => "next"(exceptio // We are using next(exception), which purpose is to move that "exception" to next route or middleware.
+
+
+
+
+blogsRouter.delete('/:id', async(request,response) => {
+
+  await blog.findByIdAndRemove(request.params.id)
+response.status(204).end()
+})
+
+
+
+
+// We determining and creating that blogsRouter and all routes to own route object as same as in previous section where all routes have been separated to application.
+// We are using module.exports that it export that determining route for module user.
+// We exporting only one things, So There is only one possible using way that we can use.
+module.exports = blogsRouter
