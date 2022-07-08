@@ -1,0 +1,62 @@
+/* eslint-disable linebreak-style */
+const bcrypt = require('bcrypt') // We initalize bcrypt, which require that "bcrypt" libary for generating the password hashes
+const usersRouter = require('express').Router() // We are creating  router object with "userRouter" function and require('express').Router()
+const User = require('../models/user') // We initalize "User", which use things inside of => models/user file
+// We are creating  initial Routehandler that return all of the users in database.
+usersRouter.get('/', async(request,response) => {
+  const users  = await User.find({}).populate('content', { title: 1, author:1, url: 1, likes:1,  }) // it aplly all values from database and return it back to user
+  // We are conducting that joint with mongoose command "populate"
+  // As we see that "populate method" is chained after eventhandler function in this case after "find" making the initial query
+  // Parameter of populate determine that blogs.id in user field will be replaced with similar document than those.
+  // Mongooses "populate" functions functionality is based on that we are determined reference types with mongoose schemas.
+  response.json(users.map(result => result.toJSON()))// We return and answer request with json mode
+})
+
+
+
+// We don't save request data but function "bcrypt.hash"  to database
+// We determine blogsRouter eventhandler, which purpose is to handle all http POST request and get that Router mode '/'
+usersRouter.post('/', async  (request,response) => {
+
+  const { username, name, password } = request.body
+  // We initalize and determine "existingUser", which is equal as that await User.So we implement checking of unique with  this function => "User.findOne({userName}"
+  const existingUser = await User.findOne({ username })
+  if(existingUser){ // If that function in above works, then we conduct things inside of that function
+    return response.status(400).json({ // We answering request with statuscode(400) bad request in json mode
+      error: 'username must be unique' // It also print that text of error in terminal, when we making HTTP POST request.
+
+    })
+  }
+
+
+  const saltRounds = 10 // We initalize "saltRounds", which get that  number value of  magic number  10
+  // We initialize passwordHash, which is the output of a one-way hash function applied to the user's password
+  const passwordHash = await bcrypt.hash(password, saltRounds) // We don't store that password in mongo db database but we store the hash of the password that is generated with "bcrypt.hash" function.
+  const user = new User({
+    username,
+    name,
+    passwordHash
+
+  })
+
+  // We initalize "savedUser", which get that value and use "await" syntax method to save user to mongoDb database
+  // We are creating users  with User construction function  they are like javaScript object So they have combination of method that they can save object in database.
+  // answering request with inside of callback function, For this we make sure that only if operation will success.
+  const savedUser = await user.save()
+  response.status(201).json(savedUser) // We answering resquest with statuscode 201  and response it json mode
+})
+
+
+
+// "response.json()" purpose is to answer and return that in statuscode(201) and in  json.mode
+// If we trying to add a new Blog, which breaks validation rule, then it throws error. Therefore
+// We are creating similar handler of creating a new blogs, that it can passes any potential exeption to the   "error handler middleware"
+// We are using catch block, which simplify that call for next function => "next"(exceptio // We are using next(exception), which purpose is to move that "exception" to next route or middleware.
+
+
+
+
+// We determining and creating that userRouter and all routes to own route object as same as in previous section where all routes have been separated to application.
+// We are using module.exports that it export that determining route for module user.
+// We exporting only one things, So There is only one possible using way that we can use.
+module.exports = usersRouter
