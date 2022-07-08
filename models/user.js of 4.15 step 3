@@ -4,17 +4,11 @@ const mongoose = require('mongoose') // We determining and initialize "mongoose"
 const userSchema = new mongoose.Schema({ // We initalize userSchema, which get value of that new mongoose.Schema table
   username:{ // There is found "username" in database, which uses settings of function {...}
     type:String,  // That type of object (username), which get value of String datatype
-    unique: true, // That we can coduct POST request without error that value can not be used before.
-    required: true, // We are using "required", which mean that that username section must contain something because without that it would be error.
-    minlength: 5 // We are using "minlenght", which mean that minlenght of username have to be at least 5 in other cases it would be error
+
   },
 
   name: String, // There is found name object in database, which uses  datatype of String
-  passwordHash:{ // There is found "passwordHash in database, which uses settings inside  of function {..}"
-    type:String, // We are giving "String datatype " to object of passwordHash
-    required: true, // We are using "required", which mean that it  section of name should have some content in other cases it would be error
-    minlength: 5 // We are using "minlength", which mean that minlenght of name should be at least 5 array in other cases it would be error.
-  },
+  passwordHash: String, // There is found "passwordHash in database, which uses settings inside  of function {..}"
   content: [ // There is found object of content,  which uses settings inside of that function{...}
     {  // We are giving "ObjectId" from MongoDb database to type for content
       // Type of field is Object,which reference to Blog style document. Mongoose doesn't know by self that its purpose is field, which  references to Blogs
@@ -23,6 +17,7 @@ const userSchema = new mongoose.Schema({ // We initalize userSchema, which get v
     }
   ]
 })
+
 
 // We can determine this that which mode it shows json data
 userSchema.set('toJSON', {
