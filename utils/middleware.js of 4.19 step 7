@@ -1,0 +1,73 @@
+/* eslint-disable linebreak-style */
+/* eslint-disable no-undef */
+/* eslint-disable linebreak-style */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable indent */
+/* eslint-disable linebreak-style */
+/* eslint-disable no-unused-vars */
+const logger = require('../utils/logger')// We initalize function logger, which have to use things inside of "logger.js"
+// We initalize "middleware function requestLogger", which have three different parameters  => [error, req,res,next]
+// "next()" function purpose is to move that control to next route or middleware
+const requestLogger = (request, response,next) => { 
+    // eslint-disable-next-line indent
+    logger.info('Method:', request.method) // It print that "Method" and reqeust.method => Method:Get
+    logger.info('Path:', request.path) // It print that "Path" and request.path => 
+    logger.info('Body:', request.body) // Print that Body and request.body => 
+    logger.info('')
+    next() // We are taking middleware "next()" function into account, which purpose is to move that into next route or middleware. 
+
+
+}
+
+
+
+//We initalize  middleware function  "unknownEndpoint", which uses (req,res) parameters
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' }) // There is also good to be some separate answer of error reason => "error": 'unkown endpoint'
+      // We answering HTTP request with statuscode(404) 
+
+
+}
+// We initalize "middleware errorhandler" function, which get four different parameters => [error, req,res,next] 
+const errorHandler = (error, request, response, next) => {    
+    logger.error(error.message) // "logger.error" purpose is to print all logger, which is related to error. So it print that error.message in visible in terminal 
+   
+    if(error.name === 'CastError') { // "errorhandler" check if its purpose is typical "CastError" if it then it response request with response object 
+    return response.status(400).send({ error: 'malformatted id' })  // console.log(error.message) Print that "error.message"  and its text in terminal&console. So if we trying to delete "persons" from database what is not found in database, then it print that => --- (Cast to ObjectId failed for value "5" (type string) at path "_id" for model "persons" CastError error happened.  Please check error and try again!:) 
+    // Whereas it is not then it moves  handling of "Next()" function to  for express existent middleware
+// We going to extend "errorhandler" to mark potential "validatorerrors"
+}else if(error.name ==='ValidationError') {   // So if if condition will happens => "error.name" is equal as 'ValidationError', Then we going to implement  things inside of {...}. 
+return response.status(400).json({ // if that if condition so "error.name==='Validation error", then it return and answer request with statuscode  in json mode and at same time it response that "error: => 'invalid token'
+    error: error.message
+  })   //  if that if condition is true That "error" is seen in console  and terminal
+}else if(error.name ==='jsonWebTokenError'){ // "errorhander" check if its purpose is typical "jsonWebTokenError" if it then it reponse request with response object 
+    return response.status(401).json({ // If that if condition in above happens, then we return and answer request with statuscode(401) in json mode
+        error: 'invalidtoken' // Whereas that if condition work, then we answer request with "error" and it print that error in console and terminal.
+    })
+
+}else if(error.name === 'tokenExpiredError'){ // "errorhandler" chekc if its purpose is typical "tokenExpiredError" if it then it response request with response object 
+    return response.status(401).json({ // Whereas that if condition will happen, then we return and answer request with statuscode(401) in json mode.
+    error: 'expired token' // Whereas that if condition work, then we answer request with "error" that value of error is seen in console when we conduct HTTP Post request
+    })
+
+}
+
+
+
+
+
+
+
+
+
+next(error) // "next()" function purpose is move that errorhandler to express "errorhandling" middleware 
+}
+
+
+// We are taking that variables "requestLogger", "unknownEndpoint", "errorhandler" to  for appllication in  own module.
+// So We separate those variables to own module that application can use.
+module.exports = {
+    requestLogger,
+    unknownEndpoint,
+    errorHandler
+}
